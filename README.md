@@ -16,7 +16,22 @@ Inspiré de l'interface tactile Minisforum AtomMan X7 Ti.
 # Fedora
 sudo dnf install nodejs brightnessctl pipewire-utils
 # power-profiles-daemon est installé par défaut avec GNOME
+
+# Pour un eGPU NVIDIA (ex. RTX 4070 en Oculink) : pilotes propriétaires + nvidia-smi
+sudo dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda   # via RPM Fusion
 ```
+
+## GPU intégré + eGPU NVIDIA (Oculink)
+
+Le dashboard détecte automatiquement les deux GPU :
+
+- **iGPU Radeon 780M** (widget `GPU`) — lu via sysfs `amdgpu`
+- **eGPU NVIDIA** (widget `eGPU`, badge OCULINK) — lu via `nvidia-smi` : usage %,
+  VRAM, température et consommation (W)
+
+L'eGPU n'apparaît que lorsqu'il est branché et que le pilote NVIDIA est chargé.
+Le widget disparaît automatiquement si tu débranches l'Oculink à chaud (hotplug).
+`nvidia-smi` est interrogé en arrière-plan (1×/s) pour ne pas ralentir le reste.
 
 ## Installation rapide
 
@@ -60,8 +75,9 @@ chromium-browser --kiosk --window-position=X,Y http://localhost:5173
 | CPU usage % | `/proc/stat` |
 | CPU fréquence | `/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq` |
 | CPU temp | `/sys/class/hwmon/hwmon*/name=k10temp` |
-| GPU busy % | `/sys/class/drm/card0/device/gpu_busy_percent` |
-| GPU temp | `/sys/class/hwmon/hwmon*/name=amdgpu` |
+| GPU busy % (iGPU) | `/sys/class/drm/card0/device/gpu_busy_percent` |
+| GPU temp (iGPU) | `/sys/class/hwmon/hwmon*/name=amdgpu` |
+| eGPU NVIDIA (4070) | `nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total,temperature.gpu,power.draw` |
 | RAM | `/proc/meminfo` |
 | Réseau | `/proc/net/dev` |
 | Disque | `df -k /` |

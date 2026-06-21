@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { SystemMetrics } from '../hooks/useSystemMetrics';
 import CpuWidget from './CpuWidget';
 import GpuWidget from './GpuWidget';
+import EgpuWidget from './EgpuWidget';
 import RamWidget from './RamWidget';
 import DiskWidget from './DiskWidget';
 import LayoutPickerModal, { Layout } from './LayoutPickerModal';
@@ -10,15 +11,17 @@ interface Props {
   metrics: SystemMetrics;
 }
 
+// gridAutoRows (au lieu de gridTemplateRows fixe) pour s'adapter à 4 ou 5
+// widgets selon que l'eGPU Oculink est branché ou non.
 function gridStyleFor(layout: Layout): React.CSSProperties {
   switch (layout) {
-    case '2x2': return { display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: 6 };
-    case '1col': return { display: 'grid', gridTemplateColumns: '1fr', gap: 6 };
-    case '3col': return { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 6 };
-    case 'left-big': return { display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 6 };
-    case '2col': return { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 };
-    case '1row': return { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gridTemplateRows: '1fr', gap: 6 };
-    default: return { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 };
+    case '2x2': return { display: 'grid', gridTemplateColumns: '1fr 1fr', gridAutoRows: '1fr', gap: 6 };
+    case '1col': return { display: 'grid', gridTemplateColumns: '1fr', gridAutoRows: '1fr', gap: 6 };
+    case '3col': return { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gridAutoRows: '1fr', gap: 6 };
+    case 'left-big': return { display: 'grid', gridTemplateColumns: '2fr 1fr', gridAutoRows: '1fr', gap: 6 };
+    case '2col': return { display: 'grid', gridTemplateColumns: '1fr 1fr', gridAutoRows: '1fr', gap: 6 };
+    case '1row': return { display: 'grid', gridAutoFlow: 'column', gridAutoColumns: '1fr', gap: 6 };
+    default: return { display: 'grid', gridTemplateColumns: '1fr 1fr', gridAutoRows: '1fr', gap: 6 };
   }
 }
 
@@ -50,6 +53,16 @@ export default function MonitorGrid({ metrics }: Props) {
             freqMHz={metrics.cpu.freqMHz}
             tempC={metrics.cpu.tempC}
           />
+          {metrics.egpu.present && (
+            <EgpuWidget
+              name={metrics.egpu.name}
+              busyPercent={metrics.egpu.busyPercent}
+              vramUsedMB={metrics.egpu.vramUsedMB}
+              vramTotalMB={metrics.egpu.vramTotalMB}
+              tempC={metrics.egpu.tempC}
+              powerW={metrics.egpu.powerW}
+            />
+          )}
           <GpuWidget
             busyPercent={metrics.gpu.busyPercent}
             vramUsedMB={metrics.gpu.vramUsedMB}

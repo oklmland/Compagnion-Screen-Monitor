@@ -4,6 +4,7 @@ export interface SystemMetrics {
   cpu: { usagePercent: number; freqMHz: number; tempC: number };
   memory: { totalGB: number; usedGB: number; percent: number };
   gpu: { busyPercent: number; vramUsedMB: number; vramTotalMB: number; vramPercent: number; tempC: number };
+  egpu: { present: boolean; name: string; busyPercent: number; vramUsedMB: number; vramTotalMB: number; vramPercent: number; tempC: number; powerW: number };
   disk: { totalGB: number; usedGB: number; percent: number };
   network: { rxMBs: number; txMBs: number };
   fans: number[];
@@ -17,6 +18,7 @@ const defaultMetrics: SystemMetrics = {
   cpu: { usagePercent: 0, freqMHz: 0, tempC: 0 },
   memory: { totalGB: 0, usedGB: 0, percent: 0 },
   gpu: { busyPercent: 0, vramUsedMB: 0, vramTotalMB: 0, vramPercent: 0, tempC: 0 },
+  egpu: { present: false, name: '', busyPercent: 0, vramUsedMB: 0, vramTotalMB: 0, vramPercent: 0, tempC: 0, powerW: 0 },
   disk: { totalGB: 0, usedGB: 0, percent: 0 },
   network: { rxMBs: 0, txMBs: 0 },
   fans: [],

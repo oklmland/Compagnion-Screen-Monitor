@@ -5,6 +5,7 @@ import { getCpuUsage, getCpuFreqMHz } from './metrics/cpu';
 import { getMemoryInfo } from './metrics/memory';
 import { getCpuTempC, getGpuTempC } from './metrics/thermal';
 import { getGpuInfo } from './metrics/gpu';
+import { getNvidiaInfo, startNvidiaPolling } from './metrics/nvidia';
 import { getNetworkSpeed } from './metrics/network';
 import { getDiskInfo } from './metrics/disk';
 import { getFanRPM } from './metrics/fans';
@@ -56,6 +57,7 @@ function collectMetrics() {
   const memory = getMemoryInfo();
   const gpuInfo = getGpuInfo();
   const gpuTempC = getGpuTempC();
+  const egpu = getNvidiaInfo();
   const network = getNetworkSpeed();
   const disk = getDiskInfo();
   const fans = getFanRPM();
@@ -67,6 +69,7 @@ function collectMetrics() {
     cpu: { usagePercent: cpuUsage, freqMHz: cpuFreqMHz, tempC: cpuTempC },
     memory,
     gpu: { ...gpuInfo, tempC: gpuTempC },
+    egpu,
     disk,
     network,
     fans,
@@ -88,6 +91,8 @@ setInterval(() => {
 wss.on('connection', (ws) => {
   ws.send(JSON.stringify(collectMetrics()));
 });
+
+startNvidiaPolling();
 
 server.listen(PORT, () => {
   console.log(`Compagnion Monitor backend listening on http://localhost:${PORT}`);
