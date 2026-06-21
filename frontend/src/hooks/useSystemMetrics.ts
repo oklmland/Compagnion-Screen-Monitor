@@ -28,7 +28,11 @@ const defaultMetrics: SystemMetrics = {
   uptime: 0,
 };
 
-const WS_URL = `ws://${window.location.hostname}:3001`;
+// En dev (Vite :5173) on se connecte directement au backend :3001.
+// En prod (servi par le backend :3001) on utilise le même host:port.
+const WS_URL = window.location.port === '5173'
+  ? `ws://${window.location.hostname}:3001`
+  : `ws://${window.location.host}`;
 
 export function useSystemMetrics() {
   const [metrics, setMetrics] = useState<SystemMetrics>(defaultMetrics);

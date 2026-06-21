@@ -1,5 +1,7 @@
 import express from 'express';
 import http from 'http';
+import path from 'path';
+import fs from 'fs';
 import { WebSocketServer, WebSocket } from 'ws';
 import { getCpuUsage, getCpuFreqMHz } from './metrics/cpu';
 import { getMemoryInfo } from './metrics/memory';
@@ -24,6 +26,15 @@ app.use((_req, res, next) => {
   next();
 });
 app.options('*', (_req, res) => res.sendStatus(204));
+
+// Servir le frontend buildé en statique (production / kiosk)
+const frontendDist = path.resolve(__dirname, '../../frontend/dist');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.get('*', (_req, res) =>
+    res.sendFile(path.join(frontendDist, 'index.html'))
+  );
+}
 
 app.post('/control', async (req, res) => {
   const { action, value } = req.body as { action: string; value?: unknown };

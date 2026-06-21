@@ -10,6 +10,12 @@ cd "$ROOT/backend" && npm install
 echo "==> Installation des dépendances frontend..."
 cd "$ROOT/frontend" && npm install
 
+echo "==> Build du frontend (production)..."
+cd "$ROOT/frontend" && npm run build
+
+echo "==> Build du backend (production)..."
+cd "$ROOT/backend" && npm run build
+
 echo "==> Configuration du service systemd..."
 SERVICE_SRC="$SCRIPT_DIR/compagnion-monitor.service"
 SERVICE_DEST="$HOME/.config/systemd/user/compagnion-monitor.service"
@@ -28,6 +34,6 @@ echo "==> Autostart configuré."
 
 echo ""
 echo "Installation terminée !"
-echo "  Backend : systemctl --user status compagnion-monitor"
-echo "  Frontend : cd $ROOT/frontend && npm run dev"
-echo "  Dashboard : http://localhost:5173"
+echo "  Status  : systemctl --user status compagnion-monitor"
+echo "  Logs    : journalctl --user -u compagnion-monitor -f"
+echo "  Dashboard : http://localhost:3001"
