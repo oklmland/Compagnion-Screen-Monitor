@@ -1,0 +1,16 @@
+[Unit]
+Description=Compagnion Screen Monitor Backend
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=__ROOT__/backend
+ExecStart=/usr/bin/node dist/server.js
+Restart=on-failure
+RestartSec=3
+Environment=NODE_ENV=production
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
