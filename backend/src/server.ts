@@ -27,12 +27,23 @@ app.use((_req, res, next) => {
 });
 app.options('*', (_req, res) => res.sendStatus(204));
 
-// Servir le frontend buildé en statique (production / kiosk)
-const frontendDist = path.resolve(__dirname, '../../frontend/dist');
+// process.cwd() = répertoire backend/ (défini par WorkingDirectory dans le service systemd,
+// ou le répertoire courant quand on lance npm run dev depuis backend/).
+// __dirname ne fonctionne pas en mode ESM (ts-node --esm).
+const frontendDist = path.resolve(process.cwd(), '../frontend/dist');
+console.log(`Frontend dist path: ${frontendDist} (exists: ${fs.existsSync(frontendDist)})`);
+
 if (fs.existsSync(frontendDist)) {
   app.use(express.static(frontendDist));
+  // SPA fallback : toutes les routes GET inconnues renvoient index.html
   app.get('*', (_req, res) =>
     res.sendFile(path.join(frontendDist, 'index.html'))
+  );
+} else {
+  app.get('/', (_req, res) =>
+    res.status(503).send(
+      'Frontend non buildé. Lancez : npm run build --prefix frontend && npm run build --prefix backend'
+    )
   );
 }
 
