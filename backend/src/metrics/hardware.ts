@@ -18,6 +18,7 @@ function readCpuName(): string {
       return m[1]
         .replace(/\(R\)|\(TM\)|\(tm\)/g, '')
         .replace(/\bCPU\b|\bProcessor\b/g, '')
+        .replace(/\bw\/\s+Radeon[^,]*/gi, '')
         .replace(/@.*$/, '')
         .replace(/\s+/g, ' ')
         .trim();
