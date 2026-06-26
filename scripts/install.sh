@@ -23,8 +23,9 @@ mkdir -p "$HOME/.config/systemd/user"
 sed "s|__ROOT__|$ROOT|g" "$SERVICE_SRC" > "$SERVICE_DEST"
 systemctl --user daemon-reload
 systemctl --user enable compagnion-monitor.service
-systemctl --user start compagnion-monitor.service
-echo "==> Service backend démarré."
+# restart (pas start) : remplace une éventuelle ancienne instance déjà active
+systemctl --user restart compagnion-monitor.service
+echo "==> Service backend (re)démarré."
 
 echo "==> Configuration de l'autostart GNOME (Chromium kiosk)..."
 DESKTOP_DEST="$HOME/.config/autostart/compagnion-kiosk.desktop"

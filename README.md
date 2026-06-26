@@ -40,8 +40,9 @@ les 15 min — la boucle WebSocket à 500 ms ne lit que des fichiers `/proc` et
 
 ```bash
 # Fedora
-sudo dnf install nodejs brightnessctl pipewire-utils
-# power-profiles-daemon est installé par défaut avec GNOME
+sudo dnf install nodejs brightnessctl pipewire-utils chromium
+# NB Fedora 41+ : NE PAS installer power-profiles-daemon, il entre en conflit
+# avec tuned-ppd (déjà présent), qui fournit la même commande powerprofilesctl.
 
 # Pour un eGPU NVIDIA (ex. RTX 4070 en Oculink) : pilotes propriétaires + nvidia-smi
 sudo dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda   # via RPM Fusion
