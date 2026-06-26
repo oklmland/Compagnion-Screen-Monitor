@@ -16,8 +16,8 @@ export default function GpuWidget({ name, busyPercent, vramUsedMB, vramTotalMB, 
   return (
     <div style={cardStyle}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '1.2vmin', minWidth: 0 }}>
+        <span style={{ ...labelStyle, marginBottom: 0, flex: 1 }}>{name}</span>
         {tempC > 0 && <span style={{ ...tempTopStyle, color: tempColor(tempC) }}>{tempC}°C</span>}
-        <span style={{ ...labelStyle, marginBottom: 0, flex: 1, textAlign: 'right' }}>{name}</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '1vmin' }}>
         <span style={bigStyle}>GPU</span>

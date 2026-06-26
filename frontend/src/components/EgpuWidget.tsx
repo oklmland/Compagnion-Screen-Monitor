@@ -19,9 +19,9 @@ export default function EgpuWidget({ name, busyPercent, vramUsedMB, vramTotalMB,
   return (
     <div style={cardStyle}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '1.2vmin', minWidth: 0 }}>
-        {tempC > 0 && <span style={{ ...tempTopStyle, color: tempColor(tempC, 70, 83) }}>{tempC}°C</span>}
-        <span style={{ ...labelStyle, marginBottom: 0, flex: 1, textAlign: 'right' }}>{shortName || 'eGPU'}</span>
+        <span style={{ ...labelStyle, marginBottom: 0, flex: 1 }}>{shortName || 'eGPU'}</span>
         <span style={{ fontSize: 'var(--fs-label)', color: '#76b900', fontWeight: 700, flexShrink: 0 }}>OCULINK</span>
+        {tempC > 0 && <span style={{ ...tempTopStyle, color: tempColor(tempC, 70, 83) }}>{tempC}°C</span>}
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '1vmin' }}>
         <span style={{ ...bigStyle, color: '#76b900' }}>eGPU</span>
