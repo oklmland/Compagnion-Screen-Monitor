@@ -84,6 +84,11 @@ utilisateur systemd (`/usr/lib/systemd/user/`) et l'autostart du kiosk
 > contrôle (`brightnessctl`, `power-profiles-daemon`, `wpctl`, `chromium`) sont
 > recommandés et installés automatiquement par `dnf` si disponibles.
 
+### Build & mise à jour automatiques via COPR
+
+Pour que le RPM se construise tout seul à chaque `git push` et s'installe via
+`dnf copr enable`, voir **[packaging/COPR.md](packaging/COPR.md)**.
+
 ## Installation rapide (script)
 
 ```bash
