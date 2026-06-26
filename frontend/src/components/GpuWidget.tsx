@@ -1,4 +1,5 @@
 import ProgressBar from './ProgressBar';
+import { cardStyle, labelStyle, bigStyle, subStyle, numStyle, tempColor } from './widgetStyles';
 
 interface Props {
   name: string;
@@ -14,29 +15,18 @@ export default function GpuWidget({ name, busyPercent, vramUsedMB, vramTotalMB, 
     : '—';
   return (
     <div style={cardStyle}>
-      <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</div>
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>GPU</span>
+      <div style={labelStyle}>{name}</div>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '1vmin' }}>
+        <span style={bigStyle}>GPU</span>
         <div style={{ textAlign: 'right' }}>
-          {vramTotalMB > 0 && <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{vramStr}</div>}
+          {vramTotalMB > 0 && <div style={subStyle}>{vramStr}</div>}
           {tempC > 0 && (
-            <div style={{ fontSize: 11, color: tempC > 85 ? 'var(--red)' : tempC > 70 ? 'var(--orange)' : 'var(--text-secondary)' }}>
-              &#127777; {tempC}°C
-            </div>
+            <div style={{ ...subStyle, color: tempColor(tempC) }}>&#127777; {tempC}°C</div>
           )}
         </div>
       </div>
       <ProgressBar percent={busyPercent} />
-      <div style={{ fontSize: 13, fontWeight: 600, marginTop: 4, textAlign: 'right' }}>{busyPercent}%</div>
+      <div style={numStyle}>{busyPercent}%</div>
     </div>
   );
 }
-
-const cardStyle: React.CSSProperties = {
-  background: 'var(--card)',
-  border: '1px solid var(--card-border)',
-  borderRadius: 'var(--radius)',
-  padding: '10px 12px',
-  display: 'flex',
-  flexDirection: 'column',
-};

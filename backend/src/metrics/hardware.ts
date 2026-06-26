@@ -27,16 +27,21 @@ function readCpuName(): string {
 }
 
 async function readGpuName(): Promise<string> {
-  // GPU intégré (iGPU) via lspci. L'eGPU NVIDIA a déjà son propre nom via nvidia-smi.
+  // 1) Beaucoup d'APU AMD annoncent le GPU dans le nom CPU : "... w/ Radeon 780M Graphics"
+  try {
+    const info = fs.readFileSync('/proc/cpuinfo', 'utf-8');
+    const m = info.match(/model name\s*:.*?\b(Radeon[^\n]*?Graphics)/i);
+    if (m) return m[1].replace(/\s+/g, ' ').trim(); // -> "Radeon 780M Graphics"
+  } catch { /* skip */ }
+  // 2) Sinon lspci. On évite les noms de code (HawkPoint, Phoenix, Device xxxx).
   try {
     const out = await execAsync('lspci -mm');
     const line = out.split('\n').find((l) => /VGA compatible controller|Display controller/i.test(l));
     if (line) {
       const fields = (line.match(/"([^"]*)"/g) || []).map((s) => s.replace(/"/g, ''));
-      // Format lspci -mm : "classe" "vendeur" "device" ...
       const device = fields[2] || '';
       const cleaned = device.replace(/\[.*?\]/g, '').replace(/\s+/g, ' ').trim();
-      if (cleaned) return cleaned;
+      if (cleaned && !/^Device\s|HawkPoint|Phoenix|Rembrandt|Granite/i.test(cleaned)) return cleaned;
     }
   } catch { /* lspci absent */ }
   return 'GPU';

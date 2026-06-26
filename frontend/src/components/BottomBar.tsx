@@ -31,31 +31,31 @@ export default function BottomBar({ metrics, onControl, connected }: Props) {
     <>
       <div style={{
         borderTop: '1px solid var(--card-border)',
-        padding: '8px 12px',
+        padding: '1.2vmin 2vmin',
         display: 'flex',
         alignItems: 'center',
         gap: 0,
         background: 'var(--card)',
       }}>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontSize: 12 }}>&#8593;</span>
-          <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', color: 'var(--text-secondary)' }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '1vmin', fontSize: 'var(--fs-sub)' }}>
+          <span>&#8593;</span>
+          <span style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--text-secondary)' }}>
             {metrics.network.txMBs.toFixed(1)}M/s
           </span>
-          <span style={{ fontSize: 12, marginLeft: 4 }}>&#8595;</span>
-          <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', color: 'var(--text-secondary)' }}>
+          <span style={{ marginLeft: '0.6vmin' }}>&#8595;</span>
+          <span style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--text-secondary)' }}>
             {metrics.network.rxMBs.toFixed(1)}M/s
           </span>
           {fanRPM !== null && (
             <>
-              <span style={{ fontSize: 12, marginLeft: 6 }}>&#10052;</span>
-              <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>
+              <span style={{ marginLeft: '1vmin' }}>&#10052;</span>
+              <span style={{ color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>
                 {fanRPM}r/m
               </span>
             </>
           )}
         </div>
-        <div style={{ display: 'flex', gap: 4 }}>
+        <div style={{ display: 'flex', gap: '1vmin' }}>
           <button
             onClick={() => setShowBrightness(true)}
             style={iconBtnStyle}
@@ -71,10 +71,10 @@ export default function BottomBar({ metrics, onControl, connected }: Props) {
             &#128266;
           </button>
           <div style={{
-            ...iconBtnStyle,
-            width: 8, height: 8, borderRadius: '50%', padding: 0, margin: 'auto 4px',
+            width: '1.4vmin', height: '1.4vmin', minWidth: 8, minHeight: 8,
+            borderRadius: '50%', margin: 'auto 0.6vmin',
             background: connected ? 'var(--green)' : 'var(--red)',
-            display: 'inline-block',
+            alignSelf: 'center',
           }} />
         </div>
       </div>
@@ -98,11 +98,12 @@ export default function BottomBar({ metrics, onControl, connected }: Props) {
 }
 
 const iconBtnStyle: React.CSSProperties = {
-  width: 36, height: 36,
+  width: 'clamp(34px, 6.5vmin, 64px)',
+  height: 'clamp(34px, 6.5vmin, 64px)',
   background: '#1a1a1a',
   border: '1px solid var(--card-border)',
-  borderRadius: 8,
-  fontSize: 16,
+  borderRadius: 'var(--radius-sm)',
+  fontSize: 'var(--fs-icon)',
   display: 'flex', alignItems: 'center', justifyContent: 'center',
   color: 'var(--text-secondary)',
 };

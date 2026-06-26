@@ -1,4 +1,5 @@
 import ProgressBar from './ProgressBar';
+import { cardStyle, labelStyle, bigStyle, subStyle, numStyle, tempColor } from './widgetStyles';
 
 interface Props {
   name: string;
@@ -17,35 +18,24 @@ export default function EgpuWidget({ name, busyPercent, vramUsedMB, vramTotalMB,
   const shortName = name.replace(/^NVIDIA\s+GeForce\s+/i, '').replace(/^NVIDIA\s+/i, '');
   return (
     <div style={cardStyle}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-        <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{shortName || 'eGPU'}</span>
-        <span style={{ fontSize: 9, color: '#76b900', fontWeight: 700 }}>OCULINK</span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1vmin' }}>
+        <span style={{ ...labelStyle, marginBottom: 0 }}>{shortName || 'eGPU'}</span>
+        <span style={{ fontSize: 'var(--fs-label)', color: '#76b900', fontWeight: 700 }}>OCULINK</span>
       </div>
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5, color: '#76b900' }}>eGPU</span>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '1vmin' }}>
+        <span style={{ ...bigStyle, color: '#76b900' }}>eGPU</span>
         <div style={{ textAlign: 'right' }}>
-          {vramTotalMB > 0 && <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{vramStr}</div>}
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-            {powerW > 0 && <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{powerW}W</span>}
+          {vramTotalMB > 0 && <div style={subStyle}>{vramStr}</div>}
+          <div style={{ display: 'flex', gap: '1.4vmin', justifyContent: 'flex-end' }}>
+            {powerW > 0 && <span style={subStyle}>{powerW}W</span>}
             {tempC > 0 && (
-              <span style={{ fontSize: 11, color: tempC > 83 ? 'var(--red)' : tempC > 70 ? 'var(--orange)' : 'var(--text-secondary)' }}>
-                &#127777; {tempC}°C
-              </span>
+              <span style={{ ...subStyle, color: tempColor(tempC, 70, 83) }}>&#127777; {tempC}°C</span>
             )}
           </div>
         </div>
       </div>
       <ProgressBar percent={busyPercent} />
-      <div style={{ fontSize: 13, fontWeight: 600, marginTop: 4, textAlign: 'right' }}>{busyPercent}%</div>
+      <div style={numStyle}>{busyPercent}%</div>
     </div>
   );
 }
-
-const cardStyle: React.CSSProperties = {
-  background: 'var(--card)',
-  border: '1px solid var(--card-border)',
-  borderRadius: 'var(--radius)',
-  padding: '10px 12px',
-  display: 'flex',
-  flexDirection: 'column',
-};

@@ -1,4 +1,5 @@
 import ProgressBar from './ProgressBar';
+import { cardStyle, labelStyle, bigStyle, subStyle, numStyle } from './widgetStyles';
 
 interface Props {
   usedGB: number;
@@ -9,24 +10,13 @@ interface Props {
 export default function RamWidget({ usedGB, totalGB, percent }: Props) {
   return (
     <div style={cardStyle}>
-      <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 2 }}>Mémoire système</div>
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>RAM</span>
-        <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
-          {usedGB}/{totalGB}G
-        </span>
+      <div style={labelStyle}>Mémoire système</div>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '1vmin' }}>
+        <span style={bigStyle}>RAM</span>
+        <span style={subStyle}>{usedGB}/{totalGB}G</span>
       </div>
       <ProgressBar percent={percent} />
-      <div style={{ fontSize: 13, fontWeight: 600, marginTop: 4, textAlign: 'right' }}>{percent}%</div>
+      <div style={numStyle}>{percent}%</div>
     </div>
   );
 }
-
-const cardStyle: React.CSSProperties = {
-  background: 'var(--card)',
-  border: '1px solid var(--card-border)',
-  borderRadius: 'var(--radius)',
-  padding: '10px 12px',
-  display: 'flex',
-  flexDirection: 'column',
-};

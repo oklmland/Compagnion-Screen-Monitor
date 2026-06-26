@@ -15,13 +15,13 @@ interface Props {
 // widgets selon que l'eGPU Oculink est branché ou non.
 function gridStyleFor(layout: Layout): React.CSSProperties {
   switch (layout) {
-    case '2x2': return { display: 'grid', gridTemplateColumns: '1fr 1fr', gridAutoRows: '1fr', gap: 6 };
-    case '1col': return { display: 'grid', gridTemplateColumns: '1fr', gridAutoRows: '1fr', gap: 6 };
-    case '3col': return { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gridAutoRows: '1fr', gap: 6 };
-    case 'left-big': return { display: 'grid', gridTemplateColumns: '2fr 1fr', gridAutoRows: '1fr', gap: 6 };
-    case '2col': return { display: 'grid', gridTemplateColumns: '1fr 1fr', gridAutoRows: '1fr', gap: 6 };
+    case '2x2': return { display: 'grid', gridTemplateColumns: '1fr 1fr', gridAutoRows: '1fr', gap: 'var(--gap)' };
+    case '1col': return { display: 'grid', gridTemplateColumns: '1fr', gridAutoRows: '1fr', gap: 'var(--gap)' };
+    case '3col': return { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gridAutoRows: '1fr', gap: 'var(--gap)' };
+    case 'left-big': return { display: 'grid', gridTemplateColumns: '2fr 1fr', gridAutoRows: '1fr', gap: 'var(--gap)' };
+    case '2col': return { display: 'grid', gridTemplateColumns: '1fr 1fr', gridAutoRows: '1fr', gap: 'var(--gap)' };
     case '1row': return { display: 'grid', gridAutoFlow: 'column', gridAutoColumns: '1fr', gap: 6 };
-    default: return { display: 'grid', gridTemplateColumns: '1fr 1fr', gridAutoRows: '1fr', gap: 6 };
+    default: return { display: 'grid', gridTemplateColumns: '1fr 1fr', gridAutoRows: '1fr', gap: 'var(--gap)' };
   }
 }
 
@@ -31,16 +31,16 @@ export default function MonitorGrid({ metrics }: Props) {
 
   return (
     <>
-      <div style={{ flex: 1, padding: '6px 12px', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 4 }}>
+      <div style={{ flex: 1, padding: '1vmin 2vmin', display: 'flex', flexDirection: 'column', minHeight: 0, gap: 'var(--gap)' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <button
             onClick={() => setShowPicker(true)}
             style={{
               background: '#1a1a1a',
               border: '1px solid var(--card-border)',
-              borderRadius: 6,
-              padding: '4px 10px',
-              fontSize: 11,
+              borderRadius: 'var(--radius-sm)',
+              padding: '0.8vmin 1.6vmin',
+              fontSize: 'var(--fs-sub)',
               color: 'var(--text-secondary)',
             }}
           >

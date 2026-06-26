@@ -1,4 +1,5 @@
 import ProgressBar from './ProgressBar';
+import { cardStyle, labelStyle, bigStyle, subStyle, numStyle, tempColor } from './widgetStyles';
 
 interface Props {
   name: string;
@@ -11,29 +12,18 @@ export default function CpuWidget({ name, usagePercent, freqMHz, tempC }: Props)
   const freqGHz = freqMHz > 0 ? (freqMHz / 1000).toFixed(1) + 'GHz' : '—';
   return (
     <div style={cardStyle}>
-      <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</div>
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>CPU</span>
+      <div style={labelStyle}>{name}</div>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '1vmin' }}>
+        <span style={bigStyle}>CPU</span>
         <div style={{ textAlign: 'right' }}>
-          {freqMHz > 0 && <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>&#9650; {freqGHz}</div>}
+          {freqMHz > 0 && <div style={subStyle}>&#9650; {freqGHz}</div>}
           {tempC > 0 && (
-            <div style={{ fontSize: 11, color: tempC > 85 ? 'var(--red)' : tempC > 70 ? 'var(--orange)' : 'var(--text-secondary)' }}>
-              &#127777; {tempC}°C
-            </div>
+            <div style={{ ...subStyle, color: tempColor(tempC) }}>&#127777; {tempC}°C</div>
           )}
         </div>
       </div>
       <ProgressBar percent={usagePercent} />
-      <div style={{ fontSize: 13, fontWeight: 600, marginTop: 4, textAlign: 'right' }}>{usagePercent}%</div>
+      <div style={numStyle}>{usagePercent}%</div>
     </div>
   );
 }
-
-const cardStyle: React.CSSProperties = {
-  background: 'var(--card)',
-  border: '1px solid var(--card-border)',
-  borderRadius: 'var(--radius)',
-  padding: '10px 12px',
-  display: 'flex',
-  flexDirection: 'column',
-};

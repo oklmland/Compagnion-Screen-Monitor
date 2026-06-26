@@ -9,7 +9,7 @@ import { getCpuTempC, getGpuTempC } from './metrics/thermal';
 import { getGpuInfo } from './metrics/gpu';
 import { getNvidiaInfo, startNvidiaPolling } from './metrics/nvidia';
 import { getNetworkSpeed } from './metrics/network';
-import { getFanRPM } from './metrics/fans';
+import { getFanRPM, logFanProbe } from './metrics/fans';
 import { detectHardware, getHardware } from './metrics/hardware';
 import { startWeatherPolling, getWeather } from './metrics/weather';
 import { startSlowPolling, getSlowState, patchSlowState } from './slowState';
@@ -102,6 +102,7 @@ wss.on('connection', (ws) => {
 });
 
 void detectHardware();
+logFanProbe();
 startNvidiaPolling();
 startSlowPolling();
 startWeatherPolling();
