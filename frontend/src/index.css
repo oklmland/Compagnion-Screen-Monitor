@@ -22,10 +22,10 @@
   --radius: 1.6vmin;
   --radius-sm: 1vmin;
 
-  --fs-label: clamp(11px, 2.3vmin, 26px);
+  --fs-label: clamp(13px, 3vmin, 32px);
   --fs-big:   clamp(26px, 7vmin, 72px);
-  --fs-num:   clamp(15px, 3.4vmin, 38px);
-  --fs-sub:   clamp(12px, 2.4vmin, 26px);
+  --fs-num:   clamp(18px, 4.3vmin, 46px);
+  --fs-sub:   clamp(14px, 3.1vmin, 32px);
   --fs-clock: clamp(38px, 11vmin, 130px);
   --fs-icon:  clamp(18px, 4vmin, 44px);
   --bar-h:    clamp(8px, 1.6vmin, 18px);

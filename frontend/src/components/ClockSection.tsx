@@ -118,35 +118,28 @@ export default function ClockSection({ metrics, onControl }: Props) {
               {padTwo(time.getHours())}:{padTwo(time.getMinutes())}:{padTwo(time.getSeconds())}
             </div>
           )}
-          <div style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)', flexShrink: 0 }}>
-            {dateStr}
+          {/* Météo en grand à droite, + date dessous */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.4vmin', flexShrink: 0 }}>
+            {weatherRange ? (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1.2vmin' }}>
+                  <span style={{ fontSize: 'clamp(30px, 8vmin, 80px)', lineHeight: 1 }}>{weatherIcon(w.code)}</span>
+                  <span style={{ fontSize: 'var(--fs-big)', fontWeight: 700, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                    {w.currentC}°
+                  </span>
+                </div>
+                <div style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>
+                  {weatherRange} · {w.city}
+                </div>
+                <div style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)' }}>{dateStr}</div>
+              </>
+            ) : (
+              <div style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)' }}>{dateStr}</div>
+            )}
           </div>
         </button>
 
-        {/* Ligne 2 : Météo */}
-        {weatherRange && (
-          <div style={{
-            marginTop: '1.2vmin',
-            padding: '0.8vmin 1.8vmin',
-            background: 'var(--blue-subtle)',
-            border: '1px solid var(--card-border)',
-            borderRadius: 'var(--radius)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '1.2vmin',
-          }}>
-            <span style={{ fontSize: 'var(--fs-num)' }}>{weatherIcon(w.code)}</span>
-            <span style={{ fontSize: 'var(--fs-sub)', fontWeight: 600, color: 'var(--text-primary)' }}>
-              {w.city}
-            </span>
-            <span style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>
-              {weatherRange}
-            </span>
-          </div>
-        )}
-
-        {/* Ligne 3 : Mode d'alimentation inline */}
+        {/* Ligne 2 : Mode d'alimentation inline */}
         <div style={{ marginTop: '1.2vmin' }}>
           <PowerModeSegment current={metrics.powerProfile} onSelect={onControl} />
         </div>
