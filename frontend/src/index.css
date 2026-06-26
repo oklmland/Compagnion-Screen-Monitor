@@ -22,6 +22,9 @@
   --radius: 1.6vmin;
   --radius-sm: 1vmin;
 
+  --font-body: 'Roboto', 'Cantarell', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-clock: 'Orbitron', 'Roboto', system-ui, sans-serif;
+
   --fs-label: clamp(13px, 3vmin, 32px);
   --fs-big:   clamp(26px, 7vmin, 72px);
   --fs-num:   clamp(18px, 4.3vmin, 46px);
@@ -38,7 +41,7 @@ html, body, #root {
   overflow: hidden;
   background: var(--bg);
   color: var(--text-primary);
-  font-family: 'Inter', 'Cantarell', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family: var(--font-body);
   font-size: var(--fs-sub);
   line-height: 1.3;
   -webkit-font-smoothing: antialiased;

@@ -61,7 +61,7 @@ function AnalogClock({ time }: { time: Date }) {
       })}
       {[[12, 0, -33], [3, 33, 0], [6, 0, 33], [9, -33, 0]].map(([n, dx, dy]) => (
         <text key={n} x={50 + dx} y={50 + dy + 4} textAnchor="middle"
-          fontSize="9" fontWeight="700" fill="#cfe0f5" fontFamily="Inter,system-ui">{n}</text>
+          fontSize="9" fontWeight="700" fill="#cfe0f5" fontFamily="Orbitron,Roboto,system-ui">{n}</text>
       ))}
       {hand(h * 30, 26, 3, '#ffffff')}
       {hand(m * 6, 36, 2.2, '#ffffff')}
@@ -93,51 +93,63 @@ export default function ClockSection({ metrics, onControl }: Props) {
     <>
       <div style={{ padding: '1.5vmin 2vmin', borderBottom: '1px solid var(--card-border)' }}>
 
-        {/* Ligne 1 : Horloge + Date à gauche, météo à droite */}
-        <button
-          onClick={() => setShowStyles(true)}
-          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '2vmin' }}
-          aria-label="Changer le style d'horloge"
-        >
-          {/* Groupe gauche : horloge + date */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '2vmin', minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'stretch', gap: '2.5vmin' }}>
+
+          {/* Colonne gauche : horloge + date dessous (tap = changer le style) */}
+          <button
+            onClick={() => setShowStyles(true)}
+            style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
+              justifyContent: 'space-between', gap: '0.8vmin', minWidth: 0,
+            }}
+            aria-label="Changer le style d'horloge"
+          >
             {style === 'analog' ? (
               <div style={{ width: 'min(22vw, 20vh)', aspectRatio: '1', flexShrink: 0 }}>
                 <AnalogClock time={time} />
               </div>
             ) : style === 'minimal' ? (
               <div style={{
-                fontSize: 'var(--fs-clock)', fontWeight: 200, letterSpacing: 2,
+                fontFamily: 'var(--font-clock)',
+                fontSize: 'var(--fs-clock)', fontWeight: 500, letterSpacing: 2,
                 color: 'var(--blue)', fontVariantNumeric: 'tabular-nums', lineHeight: 1,
               }}>
                 {padTwo(time.getHours())}:{padTwo(time.getMinutes())}
               </div>
             ) : (
               <div style={{
+                fontFamily: 'var(--font-clock)',
                 fontSize: 'var(--fs-clock)', fontWeight: 700, letterSpacing: 1,
                 fontVariantNumeric: 'tabular-nums', lineHeight: 1,
               }}>
                 {padTwo(time.getHours())}:{padTwo(time.getMinutes())}:{padTwo(time.getSeconds())}
               </div>
             )}
-            <div style={{ fontSize: 'var(--fs-num)', fontWeight: 600, color: 'var(--text-secondary)', lineHeight: 1.1 }}>
+            {/* Date sous l'heure, sur la largeur de l'heure */}
+            <div style={{
+              fontSize: 'var(--fs-num)', fontWeight: 500, color: 'var(--text-secondary)',
+              lineHeight: 1.1, whiteSpace: 'nowrap',
+            }}>
               {dateStr}
             </div>
-          </div>
-          {/* Météo à droite : icône + degrés, taille horloge */}
-          {weatherRange && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5vmin', flexShrink: 0 }}>
-              <span style={{ fontSize: 'var(--fs-clock)', lineHeight: 1 }}>{weatherIcon(w.code)}</span>
-              <span style={{ fontSize: 'var(--fs-clock)', fontWeight: 700, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                {w.currentC}°
-              </span>
-            </div>
-          )}
-        </button>
+          </button>
 
-        {/* Ligne 2 : Mode d'alimentation inline */}
-        <div style={{ marginTop: '1.2vmin' }}>
-          <PowerModeSegment current={metrics.powerProfile} onSelect={onControl} />
+          {/* Colonne droite : météo en haut, modes d'alimentation en bas */}
+          <div style={{
+            flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column',
+            justifyContent: 'space-between', gap: '1.2vmin',
+          }}>
+            {weatherRange && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '1.5vmin' }}>
+                <span style={{ fontSize: 'var(--fs-clock)', lineHeight: 1 }}>{weatherIcon(w.code)}</span>
+                <span style={{ fontSize: 'var(--fs-clock)', fontWeight: 700, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                  {w.currentC}°
+                </span>
+              </div>
+            )}
+            <PowerModeSegment current={metrics.powerProfile} onSelect={onControl} />
+          </div>
+
         </div>
 
       </div>
