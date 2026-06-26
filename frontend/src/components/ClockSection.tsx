@@ -82,7 +82,7 @@ export default function ClockSection({ metrics, onControl }: Props) {
     return () => clearInterval(t);
   }, []);
 
-  const DAYS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+  const DAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
   const MONTHS = ['jan', 'fév', 'mar', 'avr', 'mai', 'juin', 'juil', 'août', 'sep', 'oct', 'nov', 'déc'];
   const dateStr = `${DAYS[time.getDay()]} ${time.getDate()} ${MONTHS[time.getMonth()]}`;
 
@@ -100,7 +100,7 @@ export default function ClockSection({ metrics, onControl }: Props) {
           aria-label="Changer le style d'horloge"
         >
           {/* Groupe gauche : horloge + date */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2vmin', minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '2vmin', minWidth: 0 }}>
             {style === 'analog' ? (
               <div style={{ width: 'min(22vw, 20vh)', aspectRatio: '1', flexShrink: 0 }}>
                 <AnalogClock time={time} />

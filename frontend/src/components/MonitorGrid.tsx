@@ -1,11 +1,10 @@
-import { useState } from 'react';
 import { SystemMetrics } from '../hooks/useSystemMetrics';
 import CpuWidget from './CpuWidget';
 import GpuWidget from './GpuWidget';
 import EgpuWidget from './EgpuWidget';
 import RamWidget from './RamWidget';
 import DiskWidget from './DiskWidget';
-import LayoutPickerModal, { Layout } from './LayoutPickerModal';
+import type { Layout } from './LayoutPickerModal';
 
 interface Props {
   metrics: SystemMetrics;
@@ -26,28 +25,9 @@ function gridStyleFor(layout: Layout): React.CSSProperties {
 }
 
 export default function MonitorGrid({ metrics }: Props) {
-  const [layout, setLayout] = useState<Layout>('2x2');
-  const [showPicker, setShowPicker] = useState(false);
-
   return (
-    <>
-      <div style={{ flex: 1, padding: '1vmin 2vmin', display: 'flex', flexDirection: 'column', minHeight: 0, gap: 'var(--gap)' }}>
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <button
-            onClick={() => setShowPicker(true)}
-            style={{
-              background: '#1a1a1a',
-              border: '1px solid var(--card-border)',
-              borderRadius: 'var(--radius-sm)',
-              padding: '0.8vmin 1.6vmin',
-              fontSize: 'var(--fs-sub)',
-              color: 'var(--text-secondary)',
-            }}
-          >
-            &#9638; Disposition
-          </button>
-        </div>
-        <div style={{ ...gridStyleFor(layout), flex: 1 }}>
+    <div style={{ flex: 1, padding: '1vmin 2vmin', display: 'flex', flexDirection: 'column', minHeight: 0, gap: 'var(--gap)' }}>
+      <div style={{ ...gridStyleFor('2x2'), flex: 1 }}>
           <CpuWidget
             name={metrics.hardware.cpuName}
             usagePercent={metrics.cpu.usagePercent}
@@ -82,15 +62,7 @@ export default function MonitorGrid({ metrics }: Props) {
             totalGB={metrics.disk.totalGB}
             percent={metrics.disk.percent}
           />
-        </div>
       </div>
-      {showPicker && (
-        <LayoutPickerModal
-          current={layout}
-          onSelect={(l) => { setLayout(l); setShowPicker(false); }}
-          onClose={() => setShowPicker(false)}
-        />
-      )}
-    </>
+    </div>
   );
 }
