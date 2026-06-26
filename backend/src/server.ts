@@ -51,8 +51,9 @@ app.post('/control', async (req, res) => {
 });
 
 // Servir le frontend buildé en statique (production / kiosk).
-// process.cwd() = backend/ (WorkingDirectory du service systemd).
-const frontendDist = path.resolve(process.cwd(), '../frontend/dist');
+// FRONTEND_DIST permet à un paquet RPM de pointer vers /opt/.../frontend/dist.
+// Sinon : process.cwd() = backend/ (WorkingDirectory du service systemd).
+const frontendDist = process.env.FRONTEND_DIST || path.resolve(process.cwd(), '../frontend/dist');
 console.log(`Frontend dist path: ${frontendDist} (exists: ${fs.existsSync(frontendDist)})`);
 
 if (fs.existsSync(frontendDist)) {

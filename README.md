@@ -59,7 +59,32 @@ L'eGPU n'apparaît que lorsqu'il est branché et que le pilote NVIDIA est charg�
 Le widget disparaît automatiquement si tu débranches l'Oculink à chaud (hotplug).
 `nvidia-smi` est interrogé en arrière-plan (1×/s) pour ne pas ralentir le reste.
 
-## Installation rapide
+## Installation via RPM (Fedora)
+
+Le plus propre : install/désinstall gérés par `dnf`.
+
+```bash
+# Construire le paquet depuis les sources
+sudo dnf install rpm-build nodejs npm pciutils
+./packaging/build-rpm.sh
+
+# Installer le RPM généré
+sudo dnf install ~/rpmbuild/RPMS/noarch/compagnion-screen-monitor-1.0.0-1.*.noarch.rpm
+
+# Activer le backend pour ta session (kiosk auto au prochain login)
+systemctl --user enable --now compagnion-monitor
+```
+
+Le RPM installe l'appli dans `/opt/compagnion-screen-monitor`, un service
+utilisateur systemd (`/usr/lib/systemd/user/`) et l'autostart du kiosk
+(`/etc/xdg/autostart/`). Désinstallation : `sudo dnf remove compagnion-screen-monitor`.
+
+> La construction télécharge les dépendances npm (réseau requis au moment du
+> build). `nodejs` est la seule dépendance runtime obligatoire ; les outils de
+> contrôle (`brightnessctl`, `power-profiles-daemon`, `wpctl`, `chromium`) sont
+> recommandés et installés automatiquement par `dnf` si disponibles.
+
+## Installation rapide (script)
 
 ```bash
 git clone https://github.com/oklmland/compagnion-screen-monitor.git

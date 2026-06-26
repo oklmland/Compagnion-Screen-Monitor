@@ -1,0 +1,15 @@
+[Unit]
+Description=Compagnion Screen Monitor Backend
+After=graphical-session.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/compagnion-screen-monitor/backend
+Environment=NODE_ENV=production
+Environment=FRONTEND_DIST=/opt/compagnion-screen-monitor/frontend/dist
+ExecStart=/usr/bin/node /opt/compagnion-screen-monitor/backend/dist/server.js
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target
