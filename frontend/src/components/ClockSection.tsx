@@ -12,6 +12,19 @@ interface Props {
 
 function padTwo(n: number) { return String(n).padStart(2, '0'); }
 
+// Code météo WMO -> emoji (https://open-meteo.com/en/docs)
+function weatherIcon(code: number): string {
+  if (code === 0) return '☀️';                 // ciel clair ☀️
+  if (code <= 2) return '⛅';                        // peu nuageux ⛅
+  if (code === 3) return '☁️';                 // couvert ☁️
+  if (code === 45 || code === 48) return '\u{1F32B}️'; // brouillard 🌫️
+  if (code >= 51 && code <= 67) return '\u{1F327}️';   // pluie 🌧️
+  if (code >= 71 && code <= 77) return '\u{1F328}️';   // neige 🌨️
+  if (code >= 80 && code <= 82) return '\u{1F326}️';   // averses 🌦️
+  if (code >= 95) return '⛈️';                 // orage ⛈️
+  return '\u{1F324}️';                              // éclaircies 🌤️
+}
+
 function AnalogClock({ size = 80 }: { size?: number }) {
   const [time, setTime] = useState(new Date());
   useEffect(() => {
@@ -114,9 +127,18 @@ export default function ClockSection({ metrics, onControl }: Props) {
             )}
           </button>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
-            <div style={{ fontSize: 12, color: 'var(--text-secondary)', textAlign: 'right' }}>
-              &#127780; —°C
-            </div>
+            {metrics.weather.available ? (
+              <div style={{ fontSize: 13, color: 'var(--text-secondary)', textAlign: 'right', display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ fontSize: 15 }}>{weatherIcon(metrics.weather.code)}</span>
+                <span style={{ fontVariantNumeric: 'tabular-nums' }}>
+                  {metrics.weather.minC}~{metrics.weather.maxC}°C
+                </span>
+              </div>
+            ) : (
+              <div style={{ fontSize: 12, color: 'var(--text-secondary)', textAlign: 'right' }}>
+                &#127780; --
+              </div>
+            )}
             <button
               onClick={() => setShowPower(true)}
               style={{

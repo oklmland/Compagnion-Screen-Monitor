@@ -1,19 +1,20 @@
 import ProgressBar from './ProgressBar';
 
 interface Props {
+  name: string;
   busyPercent: number;
   vramUsedMB: number;
   vramTotalMB: number;
   tempC: number;
 }
 
-export default function GpuWidget({ busyPercent, vramUsedMB, vramTotalMB, tempC }: Props) {
+export default function GpuWidget({ name, busyPercent, vramUsedMB, vramTotalMB, tempC }: Props) {
   const vramStr = vramTotalMB > 0
     ? `${(vramUsedMB / 1024).toFixed(1)}/${(vramTotalMB / 1024).toFixed(0)}G`
     : '—';
   return (
     <div style={cardStyle}>
-      <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 2 }}>Radeon 780M</div>
+      <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</div>
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
         <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>GPU</span>
         <div style={{ textAlign: 'right' }}>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 export interface SystemMetrics {
+  hardware: { cpuName: string; gpuName: string; diskName: string };
   cpu: { usagePercent: number; freqMHz: number; tempC: number };
   memory: { totalGB: number; usedGB: number; percent: number };
   gpu: { busyPercent: number; vramUsedMB: number; vramTotalMB: number; vramPercent: number; tempC: number };
@@ -11,10 +12,12 @@ export interface SystemMetrics {
   powerProfile: 'power-saver' | 'balanced' | 'performance';
   brightness: number;
   volume: number;
+  weather: { available: boolean; city: string; currentC: number; minC: number; maxC: number; code: number };
   uptime: number;
 }
 
 const defaultMetrics: SystemMetrics = {
+  hardware: { cpuName: 'CPU', gpuName: 'GPU', diskName: 'Disque' },
   cpu: { usagePercent: 0, freqMHz: 0, tempC: 0 },
   memory: { totalGB: 0, usedGB: 0, percent: 0 },
   gpu: { busyPercent: 0, vramUsedMB: 0, vramTotalMB: 0, vramPercent: 0, tempC: 0 },
@@ -25,6 +28,7 @@ const defaultMetrics: SystemMetrics = {
   powerProfile: 'balanced',
   brightness: 100,
   volume: 50,
+  weather: { available: false, city: '', currentC: 0, minC: 0, maxC: 0, code: 0 },
   uptime: 0,
 };
 
@@ -64,12 +68,12 @@ export function useSystemMetrics() {
     };
   }, [connect]);
 
-  const sendControl = useCallback(async (action: string, value?: unknown) => {
-    await fetch('/control', {
+  const sendControl = useCallback((action: string, value?: unknown) => {
+    fetch('/control', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action, value }),
-    });
+    }).catch(() => { /* backend indisponible : ignoré, l'UI reste réactive */ });
   }, []);
 
   return { metrics, connected, sendControl };

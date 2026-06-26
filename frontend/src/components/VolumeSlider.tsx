@@ -1,10 +1,14 @@
+import { useState } from 'react';
+
 interface Props {
-  value: number;
+  initial: number;
   onChange: (v: number) => void;
   onClose: () => void;
 }
 
-export default function VolumeSlider({ value, onChange, onClose }: Props) {
+export default function VolumeSlider({ initial, onChange, onClose }: Props) {
+  const [value, setValue] = useState(initial);
+  const update = (v: number) => { setValue(v); onChange(v); };
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
@@ -13,7 +17,7 @@ export default function VolumeSlider({ value, onChange, onClose }: Props) {
           <span style={{ fontSize: 16 }}>&#128263;</span>
           <input
             type="range" min={0} max={100} value={value}
-            onChange={(e) => onChange(parseInt(e.target.value))}
+            onChange={(e) => update(parseInt(e.target.value))}
             style={{ flex: 1, accentColor: 'var(--blue)' }}
           />
           <span style={{ fontSize: 16 }}>&#128266;</span>

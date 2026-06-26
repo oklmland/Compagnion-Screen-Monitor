@@ -1,17 +1,15 @@
-import { execSync } from 'child_process';
+import { execAsync } from '../util/exec';
 
 export type PowerProfile = 'power-saver' | 'balanced' | 'performance';
 
-export function getPowerProfile(): PowerProfile {
+export async function getPowerProfile(): Promise<PowerProfile> {
   try {
-    const out = execSync('powerprofilesctl get', { timeout: 2000 }).toString().trim();
+    const out = await execAsync('powerprofilesctl get');
     if (out === 'power-saver' || out === 'balanced' || out === 'performance') return out;
-    return 'balanced';
-  } catch {
-    return 'balanced';
-  }
+  } catch { /* power-profiles-daemon absent */ }
+  return 'balanced';
 }
 
-export function setPowerProfile(profile: PowerProfile): void {
-  execSync(`powerprofilesctl set ${profile}`, { timeout: 2000 });
+export async function setPowerProfile(profile: PowerProfile): Promise<void> {
+  await execAsync(`powerprofilesctl set ${profile}`);
 }

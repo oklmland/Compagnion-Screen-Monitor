@@ -1,16 +1,17 @@
 import ProgressBar from './ProgressBar';
 
 interface Props {
+  name: string;
   usagePercent: number;
   freqMHz: number;
   tempC: number;
 }
 
-export default function CpuWidget({ usagePercent, freqMHz, tempC }: Props) {
+export default function CpuWidget({ name, usagePercent, freqMHz, tempC }: Props) {
   const freqGHz = freqMHz > 0 ? (freqMHz / 1000).toFixed(1) + 'GHz' : '—';
   return (
     <div style={cardStyle}>
-      <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 2 }}>Ryzen 9 8845HS</div>
+      <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</div>
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
         <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>CPU</span>
         <div style={{ textAlign: 'right' }}>

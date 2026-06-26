@@ -1,16 +1,15 @@
-import { execSync } from 'child_process';
+import { execAsync } from '../util/exec';
 
-export function getVolume(): number {
+export async function getVolume(): Promise<number> {
   try {
-    const out = execSync('wpctl get-volume @DEFAULT_AUDIO_SINK@', { timeout: 2000 }).toString().trim();
+    const out = await execAsync('wpctl get-volume @DEFAULT_AUDIO_SINK@');
     const m = out.match(/Volume: ([\d.]+)/);
-    return m ? Math.round(parseFloat(m[1]) * 100) : 50;
-  } catch {
-    return 50;
-  }
+    if (m) return Math.round(parseFloat(m[1]) * 100);
+  } catch { /* wpctl absent */ }
+  return 50;
 }
 
-export function setVolume(percent: number): void {
-  const clamped = Math.max(0, Math.min(100, percent));
-  execSync(`wpctl set-volume @DEFAULT_AUDIO_SINK@ ${clamped}%`, { timeout: 2000 });
+export async function setVolume(percent: number): Promise<void> {
+  const clamped = Math.max(0, Math.min(100, Math.round(percent)));
+  await execAsync(`wpctl set-volume @DEFAULT_AUDIO_SINK@ ${clamped}%`);
 }

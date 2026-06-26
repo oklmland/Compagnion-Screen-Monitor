@@ -6,9 +6,35 @@ Inspiré de l'interface tactile Minisforum AtomMan X7 Ti.
 
 ## Aperçu
 
-- **Section haute** : horloge (3 styles), date, sélection du profil d'alimentation
-- **Section milieu** : grille configurable — CPU, GPU Radeon 780M, RAM, SSD en temps réel
+- **Section haute** : horloge (3 styles), date, météo réelle, sélection du profil d'alimentation
+- **Section milieu** : grille configurable — CPU, GPU, RAM, SSD en temps réel (noms matériel détectés automatiquement)
 - **Section basse** : débit réseau, RPM ventilateur, contrôles luminosité/volume
+
+## Détection automatique du matériel
+
+Les noms du CPU, du GPU et du SSD sont lus directement depuis le système
+(`/proc/cpuinfo`, `lspci`, `lsblk`) — rien n'est codé en dur, l'outil
+fonctionne donc sur n'importe quelle config sans modification.
+
+## Météo
+
+La météo (icône + plage min~max du jour) provient de l'API gratuite
+[Open-Meteo](https://open-meteo.com) (sans clé), avec géolocalisation
+automatique par IP. Rafraîchie toutes les 15 min. Si le réseau est
+indisponible, la zone météo est simplement masquée.
+
+## Sécurité / réseau
+
+Le serveur écoute uniquement sur `127.0.0.1` (accès local), car il expose
+des contrôles système (profil d'alim, luminosité, volume). Pour y accéder
+depuis un autre appareil volontairement : `HOST=0.0.0.0 npm start`.
+
+## Performance
+
+Les valeurs qui changent lentement (profil d'alim, luminosité, volume,
+disque) sont interrogées en arrière-plan toutes les 2 s, et la météo toutes
+les 15 min — la boucle WebSocket à 500 ms ne lit que des fichiers `/proc` et
+`/sys` (instantané), sans jamais lancer de sous-processus bloquant.
 
 ## Prérequis
 
@@ -72,6 +98,10 @@ chromium-browser --kiosk --window-position=X,Y http://localhost:5173
 
 | Widget | Source |
 |--------|--------|
+| Nom CPU | `/proc/cpuinfo` (model name) |
+| Nom GPU | `lspci` (VGA/Display controller) |
+| Nom SSD | `lsblk -ndo MODEL` du disque racine |
+| Météo | Open-Meteo + géoloc IP (ipapi.co) |
 | CPU usage % | `/proc/stat` |
 | CPU fréquence | `/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq` |
 | CPU temp | `/sys/class/hwmon/hwmon*/name=k10temp` |

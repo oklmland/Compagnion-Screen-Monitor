@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { execAsync } from '../util/exec';
 
 export interface DiskInfo {
   totalGB: number;
@@ -6,10 +6,11 @@ export interface DiskInfo {
   percent: number;
 }
 
-export function getDiskInfo(): DiskInfo {
+export async function getDiskInfo(): Promise<DiskInfo> {
   try {
-    const out = execSync("df -k / | tail -1", { timeout: 2000 }).toString().trim();
-    const parts = out.split(/\s+/);
+    const out = await execAsync('df -k /');
+    const line = out.split('\n').slice(-1)[0];
+    const parts = line.split(/\s+/);
     const totalKB = parseInt(parts[1]) || 0;
     const usedKB = parseInt(parts[2]) || 0;
     const totalGB = Math.round(totalKB / 1024 / 1024);

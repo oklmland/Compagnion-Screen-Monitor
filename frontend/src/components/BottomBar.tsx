@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { SystemMetrics } from '../hooks/useSystemMetrics';
 import BrightnessSlider from './BrightnessSlider';
 import VolumeSlider from './VolumeSlider';
@@ -12,20 +12,20 @@ interface Props {
 export default function BottomBar({ metrics, onControl, connected }: Props) {
   const [showBrightness, setShowBrightness] = useState(false);
   const [showVolume, setShowVolume] = useState(false);
-  const [localBrightness, setLocalBrightness] = useState(metrics.brightness);
-  const [localVolume, setLocalVolume] = useState(metrics.volume);
 
   const fanRPM = metrics.fans.length > 0 ? Math.round(metrics.fans[0]) : null;
 
-  const handleBrightnessChange = (v: number) => {
-    setLocalBrightness(v);
-    onControl('set-brightness', v);
-  };
+  // Debounce trailing : pendant qu'on glisse le slider, on n'envoie la commande
+  // (qui lance brightnessctl/wpctl) qu'après 80ms d'immobilité, au lieu de
+  // spammer un sous-processus à chaque pixel.
+  const timers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+  const debouncedControl = useCallback((action: string, value: number) => {
+    clearTimeout(timers.current[action]);
+    timers.current[action] = setTimeout(() => onControl(action, value), 80);
+  }, [onControl]);
 
-  const handleVolumeChange = (v: number) => {
-    setLocalVolume(v);
-    onControl('set-volume', v);
-  };
+  const handleBrightnessChange = (v: number) => debouncedControl('set-brightness', v);
+  const handleVolumeChange = (v: number) => debouncedControl('set-volume', v);
 
   return (
     <>
@@ -81,14 +81,14 @@ export default function BottomBar({ metrics, onControl, connected }: Props) {
 
       {showBrightness && (
         <BrightnessSlider
-          value={localBrightness}
+          initial={metrics.brightness}
           onChange={handleBrightnessChange}
           onClose={() => setShowBrightness(false)}
         />
       )}
       {showVolume && (
         <VolumeSlider
-          value={localVolume}
+          initial={metrics.volume}
           onChange={handleVolumeChange}
           onClose={() => setShowVolume(false)}
         />

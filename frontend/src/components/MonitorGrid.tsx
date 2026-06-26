@@ -49,6 +49,7 @@ export default function MonitorGrid({ metrics }: Props) {
         </div>
         <div style={{ ...gridStyleFor(layout), flex: 1 }}>
           <CpuWidget
+            name={metrics.hardware.cpuName}
             usagePercent={metrics.cpu.usagePercent}
             freqMHz={metrics.cpu.freqMHz}
             tempC={metrics.cpu.tempC}
@@ -64,6 +65,7 @@ export default function MonitorGrid({ metrics }: Props) {
             />
           )}
           <GpuWidget
+            name={metrics.hardware.gpuName}
             busyPercent={metrics.gpu.busyPercent}
             vramUsedMB={metrics.gpu.vramUsedMB}
             vramTotalMB={metrics.gpu.vramTotalMB}
@@ -75,6 +77,7 @@ export default function MonitorGrid({ metrics }: Props) {
             percent={metrics.memory.percent}
           />
           <DiskWidget
+            name={metrics.hardware.diskName}
             usedGB={metrics.disk.usedGB}
             totalGB={metrics.disk.totalGB}
             percent={metrics.disk.percent}
