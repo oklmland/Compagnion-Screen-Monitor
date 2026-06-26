@@ -93,50 +93,46 @@ export default function ClockSection({ metrics, onControl }: Props) {
     <>
       <div style={{ padding: '1.5vmin 2vmin', borderBottom: '1px solid var(--card-border)' }}>
 
-        {/* Ligne 1 : Horloge + Date */}
+        {/* Ligne 1 : Horloge + Date à gauche, météo à droite */}
         <button
           onClick={() => setShowStyles(true)}
           style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '2vmin' }}
           aria-label="Changer le style d'horloge"
         >
-          {style === 'analog' ? (
-            <div style={{ width: 'min(22vw, 20vh)', aspectRatio: '1', flexShrink: 0 }}>
-              <AnalogClock time={time} />
+          {/* Groupe gauche : horloge + date */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2vmin', minWidth: 0 }}>
+            {style === 'analog' ? (
+              <div style={{ width: 'min(22vw, 20vh)', aspectRatio: '1', flexShrink: 0 }}>
+                <AnalogClock time={time} />
+              </div>
+            ) : style === 'minimal' ? (
+              <div style={{
+                fontSize: 'var(--fs-clock)', fontWeight: 200, letterSpacing: 2,
+                color: 'var(--blue)', fontVariantNumeric: 'tabular-nums', lineHeight: 1,
+              }}>
+                {padTwo(time.getHours())}:{padTwo(time.getMinutes())}
+              </div>
+            ) : (
+              <div style={{
+                fontSize: 'var(--fs-clock)', fontWeight: 700, letterSpacing: 1,
+                fontVariantNumeric: 'tabular-nums', lineHeight: 1,
+              }}>
+                {padTwo(time.getHours())}:{padTwo(time.getMinutes())}:{padTwo(time.getSeconds())}
+              </div>
+            )}
+            <div style={{ fontSize: 'var(--fs-num)', fontWeight: 600, color: 'var(--text-secondary)', lineHeight: 1.1 }}>
+              {dateStr}
             </div>
-          ) : style === 'minimal' ? (
-            <div style={{
-              fontSize: 'var(--fs-clock)', fontWeight: 200, letterSpacing: 2,
-              color: 'var(--blue)', fontVariantNumeric: 'tabular-nums', lineHeight: 1,
-            }}>
-              {padTwo(time.getHours())}:{padTwo(time.getMinutes())}
-            </div>
-          ) : (
-            <div style={{
-              fontSize: 'var(--fs-clock)', fontWeight: 700, letterSpacing: 1,
-              fontVariantNumeric: 'tabular-nums', lineHeight: 1,
-            }}>
-              {padTwo(time.getHours())}:{padTwo(time.getMinutes())}:{padTwo(time.getSeconds())}
+          </div>
+          {/* Météo à droite : icône + degrés, taille horloge */}
+          {weatherRange && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5vmin', flexShrink: 0 }}>
+              <span style={{ fontSize: 'var(--fs-clock)', lineHeight: 1 }}>{weatherIcon(w.code)}</span>
+              <span style={{ fontSize: 'var(--fs-clock)', fontWeight: 700, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                {w.currentC}°
+              </span>
             </div>
           )}
-          {/* Météo en grand à droite, + date dessous */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.4vmin', flexShrink: 0 }}>
-            {weatherRange ? (
-              <>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.2vmin' }}>
-                  <span style={{ fontSize: 'clamp(30px, 8vmin, 80px)', lineHeight: 1 }}>{weatherIcon(w.code)}</span>
-                  <span style={{ fontSize: 'var(--fs-big)', fontWeight: 700, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                    {w.currentC}°
-                  </span>
-                </div>
-                <div style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>
-                  {weatherRange} · {w.city}
-                </div>
-                <div style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)' }}>{dateStr}</div>
-              </>
-            ) : (
-              <div style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)' }}>{dateStr}</div>
-            )}
-          </div>
         </button>
 
         {/* Ligne 2 : Mode d'alimentation inline */}
