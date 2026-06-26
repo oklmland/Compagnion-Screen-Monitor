@@ -1,5 +1,5 @@
-import ProgressBar from './ProgressBar';
-import { cardStyle, labelStyle, bigStyle, subStyle, numStyle, tempColor } from './widgetStyles';
+import UsageBar from './UsageBar';
+import { cardStyle, labelStyle, bigStyle, subStyle, tempTopStyle, tempColor } from './widgetStyles';
 
 interface Props {
   name: string;
@@ -15,18 +15,15 @@ export default function GpuWidget({ name, busyPercent, vramUsedMB, vramTotalMB, 
     : '—';
   return (
     <div style={cardStyle}>
-      <div style={labelStyle}>{name}</div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '1.2vmin', minWidth: 0 }}>
+        {tempC > 0 && <span style={{ ...tempTopStyle, color: tempColor(tempC) }}>{tempC}°C</span>}
+        <span style={{ ...labelStyle, marginBottom: 0, flex: 1, textAlign: 'right' }}>{name}</span>
+      </div>
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '1vmin' }}>
         <span style={bigStyle}>GPU</span>
-        <div style={{ textAlign: 'right' }}>
-          {vramTotalMB > 0 && <div style={subStyle}>{vramStr}</div>}
-          {tempC > 0 && (
-            <div style={{ ...subStyle, color: tempColor(tempC) }}>&#127777; {tempC}°C</div>
-          )}
-        </div>
+        {vramTotalMB > 0 && <span style={subStyle}>{vramStr}</span>}
       </div>
-      <ProgressBar percent={busyPercent} />
-      <div style={numStyle}>{busyPercent}%</div>
+      <UsageBar percent={busyPercent} />
     </div>
   );
 }

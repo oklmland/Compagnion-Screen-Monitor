@@ -9,8 +9,18 @@ export const cardStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
+  gap: 'clamp(5px, 1vmin, 12px)',
   minHeight: 0,
   boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
+};
+
+// Température affichée dans le coin haut-gauche, à la taille du % d'usage.
+export const tempTopStyle: React.CSSProperties = {
+  fontSize: 'var(--fs-num)',
+  fontWeight: 700,
+  fontVariantNumeric: 'tabular-nums',
+  lineHeight: 1,
+  flexShrink: 0,
 };
 
 export const labelStyle: React.CSSProperties = {
@@ -32,14 +42,6 @@ export const bigStyle: React.CSSProperties = {
 export const subStyle: React.CSSProperties = {
   fontSize: 'var(--fs-sub)',
   color: 'var(--text-secondary)',
-};
-
-export const numStyle: React.CSSProperties = {
-  fontSize: 'var(--fs-num)',
-  fontWeight: 700,
-  marginTop: '0.6vmin',
-  textAlign: 'right',
-  fontVariantNumeric: 'tabular-nums',
 };
 
 // Couleur de température : vert/neutre -> orange -> rouge.

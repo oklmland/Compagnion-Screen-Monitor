@@ -1,5 +1,5 @@
-import ProgressBar from './ProgressBar';
-import { cardStyle, labelStyle, bigStyle, subStyle, numStyle, tempColor } from './widgetStyles';
+import UsageBar from './UsageBar';
+import { cardStyle, labelStyle, bigStyle, subStyle, tempTopStyle, tempColor } from './widgetStyles';
 
 interface Props {
   name: string;
@@ -18,24 +18,19 @@ export default function EgpuWidget({ name, busyPercent, vramUsedMB, vramTotalMB,
   const shortName = name.replace(/^NVIDIA\s+GeForce\s+/i, '').replace(/^NVIDIA\s+/i, '');
   return (
     <div style={cardStyle}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1vmin' }}>
-        <span style={{ ...labelStyle, marginBottom: 0 }}>{shortName || 'eGPU'}</span>
-        <span style={{ fontSize: 'var(--fs-label)', color: '#76b900', fontWeight: 700 }}>OCULINK</span>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '1.2vmin', minWidth: 0 }}>
+        {tempC > 0 && <span style={{ ...tempTopStyle, color: tempColor(tempC, 70, 83) }}>{tempC}°C</span>}
+        <span style={{ ...labelStyle, marginBottom: 0, flex: 1, textAlign: 'right' }}>{shortName || 'eGPU'}</span>
+        <span style={{ fontSize: 'var(--fs-label)', color: '#76b900', fontWeight: 700, flexShrink: 0 }}>OCULINK</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '1vmin' }}>
         <span style={{ ...bigStyle, color: '#76b900' }}>eGPU</span>
-        <div style={{ textAlign: 'right' }}>
-          {vramTotalMB > 0 && <div style={subStyle}>{vramStr}</div>}
-          <div style={{ display: 'flex', gap: '1.4vmin', justifyContent: 'flex-end' }}>
-            {powerW > 0 && <span style={subStyle}>{powerW}W</span>}
-            {tempC > 0 && (
-              <span style={{ ...subStyle, color: tempColor(tempC, 70, 83) }}>&#127777; {tempC}°C</span>
-            )}
-          </div>
+        <div style={{ display: 'flex', gap: '1.4vmin' }}>
+          {powerW > 0 && <span style={subStyle}>{powerW}W</span>}
+          {vramTotalMB > 0 && <span style={subStyle}>{vramStr}</span>}
         </div>
       </div>
-      <ProgressBar percent={busyPercent} />
-      <div style={numStyle}>{busyPercent}%</div>
+      <UsageBar percent={busyPercent} />
     </div>
   );
 }
