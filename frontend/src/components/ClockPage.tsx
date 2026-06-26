@@ -71,7 +71,7 @@ function ClassiqueClock({ time, size = '80vmin' }: { time: Date; size?: string }
           <text key={i}
             x={50 + Math.cos(a) * r} y={50 + Math.sin(a) * r + 3}
             textAnchor="middle" fontSize="5.5" fontWeight="600"
-            fill="#cfe0f5" fontFamily="Orbitron,serif"
+            fill="#cfe0f5" fontFamily="Nunito,serif"
           >{label}</text>
         );
       })}
@@ -164,11 +164,11 @@ function FuturisteClock({ time }: { time: Date }) {
 
       {/* Center digital readout */}
       <text x={CX} y={CY - 4} textAnchor="middle" fontSize="16" fontWeight="700"
-        fill="#ffffff" fontFamily="Orbitron,monospace" style={{ fontVariantNumeric: 'tabular-nums' }}>
+        fill="#ffffff" fontFamily="Nunito,monospace" style={{ fontVariantNumeric: 'tabular-nums' }}>
         {hh}:{mm}
       </text>
       <text x={CX} y={CY + 12} textAnchor="middle" fontSize="9" fontWeight="400"
-        fill="#8fa8c8" fontFamily="Orbitron,monospace" style={{ fontVariantNumeric: 'tabular-nums' }}>
+        fill="#8fa8c8" fontFamily="Nunito,monospace" style={{ fontVariantNumeric: 'tabular-nums' }}>
         :{ss}
       </text>
     </svg>

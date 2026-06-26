@@ -23,7 +23,7 @@
   --radius-sm: 1vmin;
 
   --font-body: 'Roboto', 'Cantarell', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --font-clock: 'Orbitron', 'Roboto', system-ui, sans-serif;
+  --font-clock: 'Nunito', 'Roboto', system-ui, sans-serif;
 
   --fs-label: clamp(13px, 3vmin, 32px);
   --fs-big:   clamp(26px, 7vmin, 72px);

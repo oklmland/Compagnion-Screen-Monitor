@@ -1,13 +1,44 @@
 import { useState, useEffect } from 'react';
 import { SystemMetrics } from '../hooks/useSystemMetrics';
 import ClockStyleModal from './ClockStyleModal';
-import PowerModeSegment from './PowerModeSegment';
 
 type ClockStyle = 'digital' | 'analog' | 'minimal';
+type PowerProfile = 'power-saver' | 'balanced' | 'performance';
 
 interface Props {
   metrics: SystemMetrics;
   onControl: (action: string, value?: unknown) => void;
+}
+
+const POWER_PROFILES: { key: PowerProfile; label: string; icon: string }[] = [
+  { key: 'power-saver', label: 'Éco',   icon: '🌿' },
+  { key: 'balanced',    label: 'Éq.',   icon: '⚖️' },
+  { key: 'performance', label: 'Perf',  icon: '⚡' },
+];
+
+function CompactPowerButton({ current, onSelect }: { current: PowerProfile; onSelect: (action: string, value?: unknown) => void }) {
+  const idx = POWER_PROFILES.findIndex(p => p.key === current);
+  const cur = POWER_PROFILES[idx >= 0 ? idx : 1];
+  const next = POWER_PROFILES[(idx + 1) % POWER_PROFILES.length];
+  return (
+    <button
+      onClick={() => onSelect('set-power-profile', next.key)}
+      title={`Mode : ${cur.label} — tap pour passer à ${next.label}`}
+      style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        gap: '0.5vmin',
+        padding: 'clamp(8px, 1.8vmin, 22px) clamp(10px, 2vmin, 24px)',
+        background: 'rgba(59,130,246,0.10)',
+        border: '1px solid rgba(59,130,246,0.35)',
+        borderRadius: 'var(--radius)',
+        color: 'var(--blue)',
+        transition: 'background 0.2s',
+      }}
+    >
+      <span style={{ fontSize: 'var(--fs-big)', lineHeight: 1 }}>{cur.icon}</span>
+      <span style={{ fontSize: 'var(--fs-label)', fontWeight: 600, lineHeight: 1, letterSpacing: '0.03em' }}>{cur.label}</span>
+    </button>
+  );
 }
 
 function padTwo(n: number) { return String(n).padStart(2, '0'); }
@@ -61,7 +92,7 @@ function AnalogClock({ time }: { time: Date }) {
       })}
       {[[12, 0, -33], [3, 33, 0], [6, 0, 33], [9, -33, 0]].map(([n, dx, dy]) => (
         <text key={n} x={50 + dx} y={50 + dy + 4} textAnchor="middle"
-          fontSize="9" fontWeight="700" fill="#cfe0f5" fontFamily="Orbitron,Roboto,system-ui">{n}</text>
+          fontSize="9" fontWeight="700" fill="#cfe0f5" fontFamily="Nunito,Roboto,system-ui">{n}</text>
       ))}
       {hand(h * 30, 26, 3, '#ffffff')}
       {hand(m * 6, 36, 2.2, '#ffffff')}
@@ -93,25 +124,45 @@ export default function ClockSection({ metrics, onControl }: Props) {
     <>
       <div style={{ padding: '1.5vmin 2vmin', borderBottom: '1px solid var(--card-border)' }}>
 
-        <div style={{ display: 'flex', alignItems: 'stretch', gap: '2.5vmin' }}>
+        <div style={{ display: 'flex', alignItems: 'stretch', gap: '2vmin' }}>
 
-          {/* Colonne gauche : horloge + date dessous (tap = changer le style) */}
+          {/* Colonne gauche : météo grande (hauteur = heure + date) */}
+          {w.available && (
+            <div style={{
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center',
+              gap: '0.3vmin', flexShrink: 0,
+            }}>
+              <span style={{ fontSize: 'var(--fs-clock)', lineHeight: 1 }}>{weatherIcon(w.code)}</span>
+              <span style={{
+                fontFamily: 'var(--font-clock)',
+                fontSize: 'var(--fs-clock)', fontWeight: 300,
+                fontVariantNumeric: 'tabular-nums', lineHeight: 1,
+              }}>
+                {w.currentC}°
+              </span>
+            </div>
+          )}
+
+          {/* Colonne centre : heure centrée + date plus grande en dessous */}
           <button
             onClick={() => setShowStyles(true)}
             style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
-              justifyContent: 'space-between', gap: '0.8vmin', minWidth: 0,
+              flex: 1, minWidth: 0,
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center',
+              gap: '0.6vmin',
             }}
             aria-label="Changer le style d'horloge"
           >
             {style === 'analog' ? (
-              <div style={{ width: 'min(22vw, 20vh)', aspectRatio: '1', flexShrink: 0 }}>
+              <div style={{ width: 'min(22vw, 20vh)', aspectRatio: '1' }}>
                 <AnalogClock time={time} />
               </div>
             ) : style === 'minimal' ? (
               <div style={{
                 fontFamily: 'var(--font-clock)',
-                fontSize: 'var(--fs-clock)', fontWeight: 500, letterSpacing: 2,
+                fontSize: 'var(--fs-clock)', fontWeight: 300, letterSpacing: 1,
                 color: 'var(--blue)', fontVariantNumeric: 'tabular-nums', lineHeight: 1,
               }}>
                 {padTwo(time.getHours())}:{padTwo(time.getMinutes())}
@@ -119,35 +170,25 @@ export default function ClockSection({ metrics, onControl }: Props) {
             ) : (
               <div style={{
                 fontFamily: 'var(--font-clock)',
-                fontSize: 'var(--fs-clock)', fontWeight: 700, letterSpacing: 1,
+                fontSize: 'var(--fs-clock)', fontWeight: 300, letterSpacing: 1,
                 fontVariantNumeric: 'tabular-nums', lineHeight: 1,
               }}>
                 {padTwo(time.getHours())}:{padTwo(time.getMinutes())}:{padTwo(time.getSeconds())}
               </div>
             )}
-            {/* Date sous l'heure, sur la largeur de l'heure */}
             <div style={{
-              fontSize: 'var(--fs-num)', fontWeight: 500, color: 'var(--text-secondary)',
-              lineHeight: 1.1, whiteSpace: 'nowrap',
+              fontFamily: 'var(--font-clock)',
+              fontSize: 'clamp(18px, 5vmin, 54px)', fontWeight: 400,
+              color: 'var(--text-secondary)', lineHeight: 1.1, whiteSpace: 'nowrap',
+              letterSpacing: '0.02em',
             }}>
               {dateStr}
             </div>
           </button>
 
-          {/* Colonne droite : météo en haut, modes d'alimentation en bas */}
-          <div style={{
-            flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column',
-            justifyContent: 'space-between', gap: '1.2vmin',
-          }}>
-            {weatherRange && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '1.5vmin' }}>
-                <span style={{ fontSize: 'var(--fs-clock)', lineHeight: 1 }}>{weatherIcon(w.code)}</span>
-                <span style={{ fontSize: 'var(--fs-clock)', fontWeight: 700, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                  {w.currentC}°
-                </span>
-              </div>
-            )}
-            <PowerModeSegment current={metrics.powerProfile} onSelect={onControl} />
+          {/* Colonne droite : bouton power compact (tap = mode suivant) */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <CompactPowerButton current={metrics.powerProfile} onSelect={onControl} />
           </div>
 
         </div>
