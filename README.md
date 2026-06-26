@@ -93,9 +93,8 @@ Pour que le RPM se construise tout seul à chaque `git push` et s'installe via
 ## Installation rapide (script)
 
 ```bash
-git clone https://github.com/oklmland/compagnion-screen-monitor.git
-cd compagnion-screen-monitor
-chmod +x scripts/install.sh
+git clone https://github.com/oklmland/Compagnion-Screen-Monitor.git
+cd Compagnion-Screen-Monitor
 ./scripts/install.sh
 ```
 
