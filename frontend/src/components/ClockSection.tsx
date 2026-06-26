@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { SystemMetrics } from '../hooks/useSystemMetrics';
 import ClockStyleModal from './ClockStyleModal';
-import PowerModeModal from './PowerModeModal';
+import PowerModeSegment from './PowerModeSegment';
 
 type ClockStyle = 'digital' | 'analog' | 'minimal';
 
@@ -12,7 +12,6 @@ interface Props {
 
 function padTwo(n: number) { return String(n).padStart(2, '0'); }
 
-// Code météo WMO -> emoji (https://open-meteo.com/en/docs)
 function weatherIcon(code: number): string {
   if (code === 0) return '☀️';
   if (code <= 2) return '⛅';
@@ -25,56 +24,45 @@ function weatherIcon(code: number): string {
   return '\u{1F324}️';
 }
 
-// Grande horloge analogique vectorielle (viewBox 0..100, scale via le conteneur).
-function AnalogClock({ time, weatherText, weatherEmoji }: { time: Date; weatherText?: string; weatherEmoji?: string }) {
+function AnalogClock({ time }: { time: Date }) {
   const s = time.getSeconds();
   const m = time.getMinutes() + s / 60;
   const h = (time.getHours() % 12) + m / 60;
-  const hand = (angleDeg: number, len: number, w: number, color: string, round = true) => {
+  const hand = (angleDeg: number, len: number, w: number, color: string) => {
     const a = (angleDeg - 90) * Math.PI / 180;
     return (
       <line
         x1={50} y1={50}
         x2={50 + Math.cos(a) * len} y2={50 + Math.sin(a) * len}
-        stroke={color} strokeWidth={w} strokeLinecap={round ? 'round' : 'butt'}
+        stroke={color} strokeWidth={w} strokeLinecap="round"
       />
     );
   };
   return (
     <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%', display: 'block' }}>
       <defs>
-        <radialGradient id="face" cx="50%" cy="42%" r="65%">
+        <radialGradient id="face-hdr" cx="50%" cy="42%" r="65%">
           <stop offset="0%" stopColor="#1c2740" />
-          <stop offset="100%" stopColor="#0c1018" />
+          <stop offset="100%" stopColor="#080c12" />
         </radialGradient>
       </defs>
-      <circle cx="50" cy="50" r="49" fill="url(#face)" stroke="#243049" strokeWidth="1.5" />
-      {/* graduations */}
+      <circle cx="50" cy="50" r="49" fill="url(#face-hdr)" stroke="#243049" strokeWidth="1.5" />
       {[...Array(60)].map((_, i) => {
         const a = (i * 6 - 90) * Math.PI / 180;
         const major = i % 5 === 0;
-        const r1 = major ? 39 : 42;
-        const r2 = 45;
         return (
           <line key={i}
-            x1={50 + Math.cos(a) * r1} y1={50 + Math.sin(a) * r1}
-            x2={50 + Math.cos(a) * r2} y2={50 + Math.sin(a) * r2}
-            stroke={major ? '#7aa2d8' : '#3a4660'}
+            x1={50 + Math.cos(a) * (major ? 39 : 42)} y1={50 + Math.sin(a) * (major ? 39 : 42)}
+            x2={50 + Math.cos(a) * 45} y2={50 + Math.sin(a) * 45}
+            stroke={major ? '#7aa2d8' : '#2a3650'}
             strokeWidth={major ? 1.6 : 0.7} strokeLinecap="round"
           />
         );
       })}
-      {/* chiffres 12 3 6 9 */}
       {[[12, 0, -33], [3, 33, 0], [6, 0, 33], [9, -33, 0]].map(([n, dx, dy]) => (
         <text key={n} x={50 + dx} y={50 + dy + 4} textAnchor="middle"
-          fontSize="9" fontWeight="700" fill="#cfe0f5" fontFamily="system-ui">{n}</text>
+          fontSize="9" fontWeight="700" fill="#cfe0f5" fontFamily="Inter,system-ui">{n}</text>
       ))}
-      {/* météo en sous-cadran facon PDF */}
-      {weatherText && (
-        <text x="50" y="68" textAnchor="middle" fontSize="7" fill="#8aa0c0" fontFamily="system-ui">
-          {weatherEmoji} {weatherText}
-        </text>
-      )}
       {hand(h * 30, 26, 3, '#ffffff')}
       {hand(m * 6, 36, 2.2, '#ffffff')}
       {hand(s * 6, 40, 1, '#f44336')}
@@ -88,83 +76,81 @@ export default function ClockSection({ metrics, onControl }: Props) {
   const [time, setTime] = useState(new Date());
   const [style, setStyle] = useState<ClockStyle>('digital');
   const [showStyles, setShowStyles] = useState(false);
-  const [showPower, setShowPower] = useState(false);
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
 
-  const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
-  const dayName = days[time.getDay()];
-  const dateStr = `${dayName} ${padTwo(time.getDate())}.${padTwo(time.getMonth() + 1)}.${time.getFullYear()}`;
-
-  const profileLabel = {
-    'power-saver': 'Éco',
-    'balanced': 'Équilibré',
-    'performance': 'Performance',
-  }[metrics.powerProfile];
+  const DAYS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+  const MONTHS = ['jan', 'fév', 'mar', 'avr', 'mai', 'juin', 'juil', 'août', 'sep', 'oct', 'nov', 'déc'];
+  const dateStr = `${DAYS[time.getDay()]} ${time.getDate()} ${MONTHS[time.getMonth()]}`;
 
   const w = metrics.weather;
-  const weatherRange = w.available ? `${w.minC}~${w.maxC}°C` : undefined;
+  const weatherRange = w.available ? `${w.minC}~${w.maxC}°C` : null;
 
   return (
     <>
       <div style={{ padding: '1.5vmin 2vmin', borderBottom: '1px solid var(--card-border)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '2vmin' }}>
-          <button
-            onClick={() => setShowStyles(true)}
-            style={{ textAlign: 'left', flex: 1, display: 'flex', alignItems: 'center', gap: '2vmin', minWidth: 0 }}
-            aria-label="Changer le style d'horloge"
-          >
-            {style === 'analog' ? (
-              <>
-                <div style={{ width: 'min(26vw, 22vh)', aspectRatio: '1', flexShrink: 0 }}>
-                  <AnalogClock time={time} weatherText={weatherRange} weatherEmoji={w.available ? weatherIcon(w.code) : undefined} />
-                </div>
-                <div style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)' }}>{dateStr}</div>
-              </>
-            ) : style === 'minimal' ? (
-              <div>
-                <div style={{ fontSize: 'var(--fs-clock)', fontWeight: 200, letterSpacing: 2, color: 'var(--blue)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                  {padTwo(time.getHours())}:{padTwo(time.getMinutes())}
-                </div>
-                <div style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)', marginTop: '0.6vmin' }}>{dateStr}</div>
-              </div>
-            ) : (
-              <div>
-                <div style={{ fontSize: 'var(--fs-clock)', fontWeight: 700, letterSpacing: 1, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                  {padTwo(time.getHours())}:{padTwo(time.getMinutes())}:{padTwo(time.getSeconds())}
-                </div>
-                <div style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)', marginTop: '0.8vmin' }}>{dateStr}</div>
-              </div>
-            )}
-          </button>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1vmin', flexShrink: 0 }}>
-            {w.available ? (
-              <div style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.8vmin' }}>
-                <span style={{ fontSize: 'var(--fs-num)' }}>{weatherIcon(w.code)}</span>
-                <span style={{ fontVariantNumeric: 'tabular-nums' }}>{weatherRange}</span>
-              </div>
-            ) : (
-              <div style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)' }}>&#127780; --</div>
-            )}
-            <button
-              onClick={() => setShowPower(true)}
-              style={{
-                background: 'var(--blue)',
-                borderRadius: '999px',
-                padding: '1vmin 2.2vmin',
-                fontSize: 'var(--fs-sub)',
-                fontWeight: 600,
-                color: 'white',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {profileLabel}
-            </button>
+
+        {/* Ligne 1 : Horloge + Date */}
+        <button
+          onClick={() => setShowStyles(true)}
+          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '2vmin' }}
+          aria-label="Changer le style d'horloge"
+        >
+          {style === 'analog' ? (
+            <div style={{ width: 'min(22vw, 20vh)', aspectRatio: '1', flexShrink: 0 }}>
+              <AnalogClock time={time} />
+            </div>
+          ) : style === 'minimal' ? (
+            <div style={{
+              fontSize: 'var(--fs-clock)', fontWeight: 200, letterSpacing: 2,
+              color: 'var(--blue)', fontVariantNumeric: 'tabular-nums', lineHeight: 1,
+            }}>
+              {padTwo(time.getHours())}:{padTwo(time.getMinutes())}
+            </div>
+          ) : (
+            <div style={{
+              fontSize: 'var(--fs-clock)', fontWeight: 700, letterSpacing: 1,
+              fontVariantNumeric: 'tabular-nums', lineHeight: 1,
+            }}>
+              {padTwo(time.getHours())}:{padTwo(time.getMinutes())}:{padTwo(time.getSeconds())}
+            </div>
+          )}
+          <div style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)', flexShrink: 0 }}>
+            {dateStr}
           </div>
+        </button>
+
+        {/* Ligne 2 : Météo */}
+        {weatherRange && (
+          <div style={{
+            marginTop: '1.2vmin',
+            padding: '0.8vmin 1.8vmin',
+            background: 'var(--blue-subtle)',
+            border: '1px solid var(--card-border)',
+            borderRadius: 'var(--radius)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '1.2vmin',
+          }}>
+            <span style={{ fontSize: 'var(--fs-num)' }}>{weatherIcon(w.code)}</span>
+            <span style={{ fontSize: 'var(--fs-sub)', fontWeight: 600, color: 'var(--text-primary)' }}>
+              {w.city}
+            </span>
+            <span style={{ fontSize: 'var(--fs-sub)', color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>
+              {weatherRange}
+            </span>
+          </div>
+        )}
+
+        {/* Ligne 3 : Mode d'alimentation inline */}
+        <div style={{ marginTop: '1.2vmin' }}>
+          <PowerModeSegment current={metrics.powerProfile} onSelect={onControl} />
         </div>
+
       </div>
 
       {showStyles && (
@@ -172,13 +158,6 @@ export default function ClockSection({ metrics, onControl }: Props) {
           current={style}
           onSelect={(s) => { setStyle(s); setShowStyles(false); }}
           onClose={() => setShowStyles(false)}
-        />
-      )}
-      {showPower && (
-        <PowerModeModal
-          current={metrics.powerProfile}
-          onSelect={(p) => { onControl('set-power-profile', p); setShowPower(false); }}
-          onClose={() => setShowPower(false)}
         />
       )}
     </>

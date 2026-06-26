@@ -7,30 +7,28 @@
 }
 
 :root {
-  --bg: #0a0a0a;
-  --card: #141414;
-  --card-border: #1e1e1e;
+  --bg: #080c12;
+  --card: #0f1520;
+  --card-border: #1a2336;
   --text-primary: #ffffff;
-  --text-secondary: #8a8a8a;
-  --blue: #2196f3;
-  --blue-dark: #1565c0;
-  --blue-glow: rgba(33, 150, 243, 0.25);
+  --text-secondary: #8fa8c8;
+  --blue: #3b82f6;
+  --blue-dark: #1d4ed8;
+  --blue-glow: rgba(59, 130, 246, 0.18);
+  --blue-subtle: rgba(59, 130, 246, 0.08);
   --orange: #ff9800;
   --red: #f44336;
   --green: #4caf50;
   --radius: 1.6vmin;
   --radius-sm: 1vmin;
 
-  /* Tailles adaptatives (vmin = % du plus petit côté de l'écran).
-     L'UI grandit/rétrécit avec l'écran : petit panneau tactile comme grand moniteur.
-     clamp(min, idéal, max) évite les extrêmes. */
-  --fs-label: clamp(11px, 2.3vmin, 26px);   /* nom matériel sous le widget */
-  --fs-big:   clamp(26px, 7vmin, 72px);     /* CPU / GPU / SSD / RAM */
-  --fs-num:   clamp(15px, 3.4vmin, 38px);   /* pourcentage principal */
-  --fs-sub:   clamp(12px, 2.4vmin, 26px);   /* fréquence, temp, détails */
-  --fs-clock: clamp(38px, 11vmin, 130px);   /* horloge numérique */
-  --fs-icon:  clamp(18px, 4vmin, 44px);     /* icônes barre du bas */
-  --bar-h:    clamp(8px, 1.6vmin, 18px);    /* épaisseur des barres de progression */
+  --fs-label: clamp(11px, 2.3vmin, 26px);
+  --fs-big:   clamp(26px, 7vmin, 72px);
+  --fs-num:   clamp(15px, 3.4vmin, 38px);
+  --fs-sub:   clamp(12px, 2.4vmin, 26px);
+  --fs-clock: clamp(38px, 11vmin, 130px);
+  --fs-icon:  clamp(18px, 4vmin, 44px);
+  --bar-h:    clamp(8px, 1.6vmin, 18px);
   --gap:      clamp(6px, 1.2vmin, 16px);
 }
 
@@ -40,7 +38,7 @@ html, body, #root {
   overflow: hidden;
   background: var(--bg);
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', 'Cantarell', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   font-size: var(--fs-sub);
   line-height: 1.3;
   -webkit-font-smoothing: antialiased;
@@ -55,6 +53,32 @@ button {
   font: inherit;
 }
 
+/* ── Page scroll-snap navigation ── */
+.page-scroll-container {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.page-scroll-container::-webkit-scrollbar { display: none; }
+
+.page-slot {
+  width: 100vw;
+  height: 100vh;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── Modals ── */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -95,10 +119,11 @@ button {
   color: var(--text-primary);
 }
 
+/* ── Progress bars ── */
 .progress-bar-track {
   width: 100%;
   height: var(--bar-h);
-  background: #2a2a2a;
+  background: #1a2336;
   border-radius: 999px;
   overflow: hidden;
   margin-top: 1vmin;
@@ -108,4 +133,41 @@ button {
   height: 100%;
   border-radius: 999px;
   transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.progress-bar-fill--glow {
+  box-shadow: 0 0 6px currentColor;
+}
+
+/* ── Big touch sliders (ControlsPage) ── */
+.big-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: clamp(28px, 5vmin, 56px);
+  border-radius: 999px;
+  background: var(--card-border);
+  accent-color: var(--blue);
+  cursor: pointer;
+  touch-action: pan-x;
+  outline: none;
+}
+.big-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: clamp(32px, 6vmin, 56px);
+  height: clamp(32px, 6vmin, 56px);
+  border-radius: 50%;
+  background: var(--blue);
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+  cursor: pointer;
+}
+.big-range::-moz-range-thumb {
+  width: clamp(32px, 6vmin, 56px);
+  height: clamp(32px, 6vmin, 56px);
+  border-radius: 50%;
+  background: var(--blue);
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+  cursor: pointer;
 }

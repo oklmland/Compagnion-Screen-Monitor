@@ -2,7 +2,7 @@ import React from 'react';
 
 // Styles partagés par les widgets de la grille, en tailles adaptatives (vmin).
 export const cardStyle: React.CSSProperties = {
-  background: 'var(--card)',
+  background: 'linear-gradient(135deg, #0f1520, #111a28)',
   border: '1px solid var(--card-border)',
   borderRadius: 'var(--radius)',
   padding: 'clamp(8px, 1.8vmin, 22px) clamp(10px, 2.2vmin, 26px)',
@@ -10,6 +10,7 @@ export const cardStyle: React.CSSProperties = {
   flexDirection: 'column',
   justifyContent: 'center',
   minHeight: 0,
+  boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
 };
 
 export const labelStyle: React.CSSProperties = {
